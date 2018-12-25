@@ -1,0 +1,79 @@
+{
+	"info": {
+		"_postman_id": "3ed7f3aa-922f-4cca-9b7f-85365b0e7736",
+		"name": "go-rest-api-seed",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "newEventHandler",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"Name\": \"Opera Aida\",\n\t\"Location\": {\n\t\t\"Name\":\"West Street Opera House\",\n\t\t\"Address\":\"11 West Street, AZ 73646\",\n\t\t\"Country\":\"USA\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8181/events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8181",
+					"path": [
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "allEventHandler",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:8181/events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8181",
+					"path": [
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "findEventHandler",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:8181/events/name/Opera Aida",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8181",
+					"path": [
+						"events",
+						"name",
+						"Opera Aida"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
