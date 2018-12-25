@@ -1,35 +1,20 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
-	"net/http"
+	"flag"
+	"fmt"
+	"github.com/danielpacak/go-rest-api-seed/configuration"
+	"github.com/danielpacak/go-rest-api-seed/dblayer"
+	"github.com/danielpacak/go-rest-api-seed/rest"
+	"log"
 )
 
-type eventServiceHandler struct{}
-
-func (eh *eventServiceHandler) findEventHandler(w http.ResponseWriter, r *http.Request) {
-
-}
-
-func (eh *eventServiceHandler) allEventHandler(w http.ResponseWriter, r *http.Request) {
-
-}
-
-func (eh *eventServiceHandler) newEventHandler(w http.ResponseWriter, r *http.Request) {
-
-}
-
-func ServeAPI(endpoint string) error {
-	handler := &eventServiceHandler{}
-	router := mux.NewRouter()
-	eventsRouter := router.PathPrefix("/events").Subrouter()
-
-	eventsRouter.Methods("GET").Path("/{SearchCriteria}/{search}").HandlerFunc(handler.findEventHandler)
-	eventsRouter.Methods("GET").Path("").HandlerFunc(handler.allEventHandler)
-	eventsRouter.Methods("POST").Path("").HandlerFunc(handler.newEventHandler)
-	return http.ListenAndServe(endpoint, router)
-}
-
 func main() {
-	ServeAPI(":8080")
+	confPath := flag.String("conf", `.\configuration\config.json`, "flag to set the path to the configuration json file")
+	flag.Parse()
+	config, _ := configuration.ExtractConfiguration(*confPath)
+	fmt.Println("Connecting to database")
+	dbhandler, _ := dblayer.NewPersistenceLayer(config.Databasetype, config.DBConnection)
+
+	log.Fatal(rest.ServeAPI(config.RestfulEndpoint, dbhandler))
 }
