@@ -85,7 +85,7 @@ func newEventHandler(databaseHandler persistence.DatabaseHandler) *eventServiceH
 	return &eventServiceHandler{dbhandler: databaseHandler}
 }
 
-func ServeAPI(endpoint string, dbHandler persistence.DatabaseHandler) error {
+func ServeAPI(endpoint string, tlsendpoint string, dbHandler persistence.DatabaseHandler) (chan error, chan error) {
 	handler := newEventHandler(dbHandler)
 	router := mux.NewRouter()
 	eventsRouter := router.PathPrefix("/events").Subrouter()
@@ -93,5 +93,11 @@ func ServeAPI(endpoint string, dbHandler persistence.DatabaseHandler) error {
 	eventsRouter.Methods("GET").Path("/{SearchCriteria}/{search}").HandlerFunc(handler.findEventHandler)
 	eventsRouter.Methods("GET").Path("").HandlerFunc(handler.allEventHandler)
 	eventsRouter.Methods("POST").Path("").HandlerFunc(handler.newEventHandler)
-	return http.ListenAndServe(endpoint, router)
+
+	httpErrChan := make(chan error)
+	httptlsErrChan := make(chan error)
+
+	go func() { httpErrChan <- http.ListenAndServe(endpoint, router) }()
+	go func() { httptlsErrChan <- http.ListenAndServeTLS(tlsendpoint, "tls/cert.pem", "tls/key.unencrypted.pem", router) }()
+	return httpErrChan, httptlsErrChan
 }
