@@ -4,14 +4,18 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/danielpacak/go-rest-api-seed/persistence"
+	"github.com/danielpacak/myevents-contracts"
+	"github.com/danielpacak/myevents-contracts/lib/msgqueue"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
 	"encoding/json"
+	"time"
 )
 
 type eventServiceHandler struct {
-	dbhandler persistence.DatabaseHandler
+	dbhandler    persistence.DatabaseHandler
+	eventEmitter msgqueue.EventEmitter
 }
 
 func (eh *eventServiceHandler) findEventHandler(w http.ResponseWriter, r *http.Request) {
@@ -79,14 +83,25 @@ func (eh *eventServiceHandler) newEventHandler(w http.ResponseWriter, r *http.Re
 		fmt.Fprintf(w, "{error: error occured while persisting event %d %s", id, err)
 		return
 	}
+	msg := contracts.EventCreatedEvent{
+		ID:   hex.EncodeToString(id),
+		Name: event.Name,
+		// LocationID: event.Location.ID,
+		Start: time.Unix(event.StartDate, 0),
+		End:   time.Unix(event.EndDate, 0),
+	}
+	eh.eventEmitter.Emit(&msg)
 }
 
-func newEventHandler(databaseHandler persistence.DatabaseHandler) *eventServiceHandler {
-	return &eventServiceHandler{dbhandler: databaseHandler}
+func newEventHandler(databaseHandler persistence.DatabaseHandler, emitter msgqueue.EventEmitter) *eventServiceHandler {
+	return &eventServiceHandler{
+		dbhandler:    databaseHandler,
+		eventEmitter: emitter,
+	}
 }
 
-func ServeAPI(endpoint string, tlsendpoint string, dbHandler persistence.DatabaseHandler) (chan error, chan error) {
-	handler := newEventHandler(dbHandler)
+func ServeAPI(endpoint string, tlsendpoint string, dbHandler persistence.DatabaseHandler, emitter msgqueue.EventEmitter) (chan error, chan error) {
+	handler := newEventHandler(dbHandler, emitter)
 	router := mux.NewRouter()
 	eventsRouter := router.PathPrefix("/events").Subrouter()
 
