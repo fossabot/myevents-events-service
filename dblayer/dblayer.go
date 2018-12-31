@@ -1,8 +1,8 @@
 package dblayer
 
 import (
-	"github.com/danielpacak/go-rest-api-seed/mongolayer"
-	"github.com/danielpacak/go-rest-api-seed/persistence"
+	"github.com/danielpacak/myevents-event-service/mongolayer"
+	"github.com/danielpacak/myevents-event-service/persistence"
 )
 
 type DBTYPE string

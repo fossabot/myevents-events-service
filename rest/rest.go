@@ -3,7 +3,7 @@ package rest
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/danielpacak/go-rest-api-seed/persistence"
+	"github.com/danielpacak/myevents-event-service/persistence"
 	"github.com/danielpacak/myevents-contracts"
 	"github.com/danielpacak/myevents-contracts/lib/msgqueue"
 	"github.com/gorilla/mux"

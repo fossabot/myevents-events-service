@@ -1,7 +1,7 @@
 package mongolayer
 
 import (
-	"github.com/danielpacak/go-rest-api-seed/persistence"
+	"github.com/danielpacak/myevents-event-service/persistence"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

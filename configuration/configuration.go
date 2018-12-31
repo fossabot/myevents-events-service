@@ -3,15 +3,16 @@ package configuration
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/danielpacak/go-rest-api-seed/dblayer"
+	"github.com/danielpacak/myevents-event-service/dblayer"
 	"os"
 )
 
 var (
-	DBTypeDefault       = dblayer.DBTYPE("mongodb")
-	DBConnectionDefault = "mongodb://127.0.0.1"
-	RestfulEPDefault    = "localhost:8181"
-	RestfulTlsEPDefault = "localhost:4343"
+	DBTypeDefault            = dblayer.DBTYPE("mongodb")
+	DBConnectionDefault      = "mongodb://127.0.0.1"
+	RestfulEPDefault         = "localhost:8181"
+	RestfulTlsEPDefault      = "localhost:4343"
+	AMQPMessageBrokerDefault = "amqp://localhost:5672"
 )
 
 type ServiceConfig struct {
@@ -28,7 +29,10 @@ func ExtractConfiguration(filename string) (ServiceConfig, error) {
 		DBConnectionDefault,
 		RestfulEPDefault,
 		RestfulTlsEPDefault,
-		"",
+		AMQPMessageBrokerDefault,
+	}
+	if broker := os.Getenv("AMQP_URL"); broker != "" {
+		conf.AMQPMessageBroker = broker
 	}
 	file, err := os.Open(filename)
 	if err != nil {
@@ -36,8 +40,6 @@ func ExtractConfiguration(filename string) (ServiceConfig, error) {
 		return conf, err
 	}
 	err = json.NewDecoder(file).Decode(&conf)
-	if broker := os.Getenv("AMQP_URL"); broker != "" {
-		conf.AMQPMessageBroker = broker
-	}
+
 	return conf, err
 }

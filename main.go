@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/danielpacak/go-rest-api-seed/configuration"
-	"github.com/danielpacak/go-rest-api-seed/dblayer"
-	"github.com/danielpacak/go-rest-api-seed/rest"
 	msgqueue_amqp "github.com/danielpacak/myevents-contracts/lib/msgqueue/amqp"
+	"github.com/danielpacak/myevents-event-service/configuration"
+	"github.com/danielpacak/myevents-event-service/dblayer"
+	"github.com/danielpacak/myevents-event-service/rest"
 	"github.com/streadway/amqp"
 	"log"
 )
@@ -15,9 +15,9 @@ func main() {
 	confPath := flag.String("conf", `.\configuration\config.json`, "flag to set the path to the configuration json file")
 	flag.Parse()
 	config, _ := configuration.ExtractConfiguration(*confPath)
-	fmt.Println("Connecting to database")
+	fmt.Printf("Connecting to database at %s\n", config.DBConnection)
 	dbhandler, _ := dblayer.NewPersistenceLayer(config.Databasetype, config.DBConnection)
-	fmt.Println("Connecting to message broker")
+	fmt.Printf("Connecting to message broker at %s\n", config.AMQPMessageBroker)
 	conn, err := amqp.Dial(config.AMQPMessageBroker)
 	if err != nil {
 		panic(err)
