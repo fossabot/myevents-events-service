@@ -6,6 +6,7 @@ import (
 	"github.com/danielpacak/myevents-event-service/persistence"
 	"github.com/danielpacak/myevents-contracts"
 	"github.com/danielpacak/myevents-contracts/lib/msgqueue"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
@@ -100,8 +101,8 @@ func newEventHandler(databaseHandler persistence.DatabaseHandler, emitter msgque
 	}
 }
 
-func ServeAPI(endpoint string, tlsendpoint string, dbHandler persistence.DatabaseHandler, emitter msgqueue.EventEmitter) (chan error, chan error) {
-	handler := newEventHandler(dbHandler, emitter)
+func ServeAPI(httpHandler string, httpsEndpoint string, databaseHandler persistence.DatabaseHandler, eventEmitter msgqueue.EventEmitter) (chan error, chan error) {
+	handler := newEventHandler(databaseHandler, eventEmitter)
 	router := mux.NewRouter()
 	eventsRouter := router.PathPrefix("/events").Subrouter()
 
@@ -110,9 +111,11 @@ func ServeAPI(endpoint string, tlsendpoint string, dbHandler persistence.Databas
 	eventsRouter.Methods("POST").Path("").HandlerFunc(handler.newEventHandler)
 
 	httpErrChan := make(chan error)
-	httptlsErrChan := make(chan error)
+	httpsErrChan := make(chan error)
 
-	go func() { httpErrChan <- http.ListenAndServe(endpoint, router) }()
-	go func() { httptlsErrChan <- http.ListenAndServeTLS(tlsendpoint, "tls/cert.pem", "tls/key.unencrypted.pem", router) }()
-	return httpErrChan, httptlsErrChan
+	server := handlers.CORS()(router)
+
+	go func() { httpErrChan <- http.ListenAndServe(httpHandler, server) }()
+	go func() { httpsErrChan <- http.ListenAndServeTLS(httpsEndpoint, "tls/cert.pem", "tls/key.unencrypted.pem", server) }()
+	return httpErrChan, httpsErrChan
 }
