@@ -27,7 +27,7 @@ func main() {
 		panic(err)
 	}
 
-	httpErrChan, httptlsErrChan := rest.ServeAPI(config.RestfulEndpoint, config.RestfulTlsendpoint, dbhandler, emitter)
+	httpErrChan, httptlsErrChan := rest.ServeAPI(config.RestfulEndpoint, dbhandler, emitter)
 	select {
 	case err := <-httpErrChan:
 		log.Fatal("HTTP Error: ", err)

@@ -101,7 +101,7 @@ func newEventHandler(databaseHandler persistence.DatabaseHandler, emitter msgque
 	}
 }
 
-func ServeAPI(httpHandler string, httpsEndpoint string, databaseHandler persistence.DatabaseHandler, eventEmitter msgqueue.EventEmitter) (chan error, chan error) {
+func ServeAPI(httpHandler string, databaseHandler persistence.DatabaseHandler, eventEmitter msgqueue.EventEmitter) (chan error, chan error) {
 	handler := newEventHandler(databaseHandler, eventEmitter)
 	router := mux.NewRouter()
 	eventsRouter := router.PathPrefix("/events").Subrouter()
@@ -116,6 +116,5 @@ func ServeAPI(httpHandler string, httpsEndpoint string, databaseHandler persiste
 	server := handlers.CORS()(router)
 
 	go func() { httpErrChan <- http.ListenAndServe(httpHandler, server) }()
-	go func() { httpsErrChan <- http.ListenAndServeTLS(httpsEndpoint, "tls/cert.pem", "tls/key.unencrypted.pem", server) }()
 	return httpErrChan, httpsErrChan
 }

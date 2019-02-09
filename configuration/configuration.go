@@ -11,16 +11,14 @@ var (
 	DBTypeDefault            = dblayer.DBTYPE("mongodb")
 	DBConnectionDefault      = "mongodb://127.0.0.1"
 	RestfulEPDefault         = "localhost:8181"
-	RestfulTlsEPDefault      = "localhost:4343"
 	AMQPMessageBrokerDefault = "amqp://localhost:5672"
 )
 
 type ServiceConfig struct {
-	Databasetype       dblayer.DBTYPE `json:"databasetype"`
-	DBConnection       string         `json:"dbconnection"`
-	RestfulEndpoint    string         `json:"restfulapi_endpoint"`
-	RestfulTlsendpoint string         `json:"restfulapi_tlsendpoint"`
-	AMQPMessageBroker  string         `json:"amqp_message_broker"`
+	Databasetype      dblayer.DBTYPE `json:"databasetype"`
+	DBConnection      string         `json:"dbconnection"`
+	RestfulEndpoint   string         `json:"restfulapi_endpoint"`
+	AMQPMessageBroker string         `json:"amqp_message_broker"`
 }
 
 func ExtractConfiguration(filename string) (ServiceConfig, error) {
@@ -28,11 +26,16 @@ func ExtractConfiguration(filename string) (ServiceConfig, error) {
 		DBTypeDefault,
 		DBConnectionDefault,
 		RestfulEPDefault,
-		RestfulTlsEPDefault,
 		AMQPMessageBrokerDefault,
 	}
-	if broker := os.Getenv("AMQP_URL"); broker != "" {
-		conf.AMQPMessageBroker = broker
+	if brokerUrl := os.Getenv("AMQP_BROKER_URL"); brokerUrl != "" {
+		conf.AMQPMessageBroker = brokerUrl
+	}
+	if mongoUrl := os.Getenv("MONGO_URL"); mongoUrl != "" {
+		conf.DBConnection = mongoUrl
+	}
+	if listenUrl := os.Getenv("LISTEN_URL"); listenUrl != "" {
+		conf.RestfulEndpoint = listenUrl
 	}
 	file, err := os.Open(filename)
 	if err != nil {
