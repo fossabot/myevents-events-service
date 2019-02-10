@@ -1,20 +1,17 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	msgqueue_amqp "github.com/danielpacak/myevents-contracts/lib/msgqueue/amqp"
-	"github.com/danielpacak/myevents-event-service/configuration"
-	"github.com/danielpacak/myevents-event-service/dblayer"
-	"github.com/danielpacak/myevents-event-service/rest"
+	"github.com/danielpacak/myevents-events-service/configuration"
+	"github.com/danielpacak/myevents-events-service/dblayer"
+	"github.com/danielpacak/myevents-events-service/rest"
 	"github.com/streadway/amqp"
 	"log"
 )
 
 func main() {
-	confPath := flag.String("conf", `.\configuration\config.json`, "flag to set the path to the configuration json file")
-	flag.Parse()
-	config, _ := configuration.ExtractConfiguration(*confPath)
+	config, _ := configuration.ExtractConfiguration()
 	fmt.Printf("Connecting to database at %s\n", config.DBConnection)
 	dbhandler, _ := dblayer.NewPersistenceLayer(config.Databasetype, config.DBConnection)
 	fmt.Printf("Connecting to message broker at %s\n", config.AMQPMessageBroker)
@@ -27,11 +24,9 @@ func main() {
 		panic(err)
 	}
 
-	httpErrChan, httptlsErrChan := rest.ServeAPI(config.RestfulEndpoint, dbhandler, emitter)
+	httpErrChan := rest.ServeAPI(config.RestfulEndpoint, dbhandler, emitter)
 	select {
 	case err := <-httpErrChan:
 		log.Fatal("HTTP Error: ", err)
-	case err := <-httptlsErrChan:
-		log.Fatal("HTTPS Error: ", err)
 	}
 }

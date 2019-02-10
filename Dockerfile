@@ -1,6 +1,6 @@
 FROM debian:jessie
 
-COPY myevents-event-service /events-service
+COPY myevents-events-service /events-service
 RUN useradd events-service
 USER events-service
 

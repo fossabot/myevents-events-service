@@ -1,9 +1,7 @@
 package configuration
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/danielpacak/myevents-event-service/dblayer"
+	"github.com/danielpacak/myevents-events-service/dblayer"
 	"os"
 )
 
@@ -21,7 +19,7 @@ type ServiceConfig struct {
 	AMQPMessageBroker string         `json:"amqp_message_broker"`
 }
 
-func ExtractConfiguration(filename string) (ServiceConfig, error) {
+func ExtractConfiguration() (ServiceConfig, error) {
 	conf := ServiceConfig{
 		DBTypeDefault,
 		DBConnectionDefault,
@@ -37,12 +35,6 @@ func ExtractConfiguration(filename string) (ServiceConfig, error) {
 	if listenUrl := os.Getenv("LISTEN_URL"); listenUrl != "" {
 		conf.RestfulEndpoint = listenUrl
 	}
-	file, err := os.Open(filename)
-	if err != nil {
-		fmt.Println("Configuration file not found. Continuing with default values.")
-		return conf, err
-	}
-	err = json.NewDecoder(file).Decode(&conf)
 
-	return conf, err
+	return conf, nil
 }

@@ -3,7 +3,7 @@ package persistence
 import "gopkg.in/mgo.v2/bson"
 
 type Event struct {
-	ID        bson.ObjectId `bson::"_id"`
+	ID        bson.ObjectId `bson:"_id"`
 	Name      string
 	Duration  int
 	StartDate int64
@@ -29,7 +29,7 @@ type Hall struct {
 
 type DatabaseHandler interface {
 	AddEvent(event Event) ([]byte, error)
-	FindEvent(id []byte) ( Event, error)
+	FindEvent(id []byte) (Event, error)
 	FindEventByName(name string) (Event, error)
 	FindAllAvailableEvents() ([]Event, error)
 }

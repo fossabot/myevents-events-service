@@ -1,8 +1,8 @@
 package dblayer
 
 import (
-	"github.com/danielpacak/myevents-event-service/mongolayer"
-	"github.com/danielpacak/myevents-event-service/persistence"
+	"github.com/danielpacak/myevents-events-service/mongolayer"
+	"github.com/danielpacak/myevents-events-service/persistence"
 )
 
 type DBTYPE string

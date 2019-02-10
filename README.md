@@ -1,6 +1,6 @@
 # myevents-event-service
 
-[![Build Status](https://travis-ci.org/danielpacak/myevents-event-service.svg?branch=master)](https://travis-ci.org/danielpacak/myevents-event-service)
+[![Build Status](https://travis-ci.org/danielpacak/myevents-events-service.svg?branch=master)](https://travis-ci.org/danielpacak/myevents-events-service)
 
 ## Building and running locally
 

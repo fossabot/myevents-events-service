@@ -2,15 +2,15 @@ package rest
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
-	"github.com/danielpacak/myevents-event-service/persistence"
 	"github.com/danielpacak/myevents-contracts"
 	"github.com/danielpacak/myevents-contracts/lib/msgqueue"
+	"github.com/danielpacak/myevents-events-service/persistence"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
-	"encoding/json"
 	"time"
 )
 
@@ -101,7 +101,7 @@ func newEventHandler(databaseHandler persistence.DatabaseHandler, emitter msgque
 	}
 }
 
-func ServeAPI(httpHandler string, databaseHandler persistence.DatabaseHandler, eventEmitter msgqueue.EventEmitter) (chan error, chan error) {
+func ServeAPI(httpHandler string, databaseHandler persistence.DatabaseHandler, eventEmitter msgqueue.EventEmitter) chan error {
 	handler := newEventHandler(databaseHandler, eventEmitter)
 	router := mux.NewRouter()
 	eventsRouter := router.PathPrefix("/events").Subrouter()
@@ -111,10 +111,9 @@ func ServeAPI(httpHandler string, databaseHandler persistence.DatabaseHandler, e
 	eventsRouter.Methods("POST").Path("").HandlerFunc(handler.newEventHandler)
 
 	httpErrChan := make(chan error)
-	httpsErrChan := make(chan error)
 
 	server := handlers.CORS()(router)
 
 	go func() { httpErrChan <- http.ListenAndServe(httpHandler, server) }()
-	return httpErrChan, httpsErrChan
+	return httpErrChan
 }
