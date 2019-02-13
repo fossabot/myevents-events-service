@@ -6,8 +6,10 @@ import (
 	"github.com/danielpacak/myevents-events-service/configuration"
 	"github.com/danielpacak/myevents-events-service/dblayer"
 	"github.com/danielpacak/myevents-events-service/rest"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/streadway/amqp"
 	"log"
+	"net/http"
 )
 
 func main() {
@@ -23,6 +25,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	go func() {
+		fmt.Println("Serving metrics API")
+		h := http.NewServeMux()
+		h.Handle("/metrics", prometheus.Handler())
+		err := http.ListenAndServe(":9100", h)
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	httpErrChan := rest.ServeAPI(config.RestfulEndpoint, dbhandler, emitter)
 	select {
