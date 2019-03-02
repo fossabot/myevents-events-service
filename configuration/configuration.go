@@ -21,7 +21,7 @@ type ServiceConfig struct {
 	AMQPMessageBroker string
 }
 
-func ExtractConfiguration() (ServiceConfig, error) {
+func ExtractConfiguration() ServiceConfig {
 	conf := ServiceConfig{
 		DBTypeDefault,
 		DBConnectionDefault,
@@ -39,5 +39,5 @@ func ExtractConfiguration() (ServiceConfig, error) {
 		conf.RestApiAddr = listenUrl
 	}
 
-	return conf, nil
+	return conf
 }

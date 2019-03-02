@@ -3,14 +3,15 @@ package main
 import (
 	"github.com/danielpacak/myevents-events-service/configuration"
 	"github.com/danielpacak/myevents-events-service/dblayer"
+	"github.com/danielpacak/myevents-events-service/metrics"
 	"github.com/danielpacak/myevents-events-service/rest"
-	"github.com/prometheus/client_golang/prometheus"
 	"log"
 	"net/http"
+	"sync"
 )
 
 func main() {
-	config, _ := configuration.ExtractConfiguration()
+	config := configuration.ExtractConfiguration()
 
 	repository, err := dblayer.NewEventsRepository(config.DatabaseType, config.DBConnection)
 	if err != nil {
@@ -22,19 +23,28 @@ func main() {
 		panic(err)
 	}
 
+	var wg sync.WaitGroup
+	wg.Add(2)
+
 	go func() {
+		server := metrics.NewMetricsServer()
 		log.Printf("Serving metrics at `%s`", config.MetricsAddr)
-		h := http.NewServeMux()
-		h.Handle("/metrics", prometheus.Handler())
-		err := http.ListenAndServe(config.MetricsAddr, h)
+		err := http.ListenAndServe(config.MetricsAddr, server)
 		if err != nil {
 			panic(err)
 		}
+		wg.Done()
 	}()
 
-	httpErrChan := rest.ServeAPI(config.RestApiAddr, repository, emitter)
-	select {
-	case err := <-httpErrChan:
-		log.Fatal("HTTP Error: ", err)
-	}
+	go func() {
+		server := rest.NewAPIServer(repository, emitter)
+		log.Printf("Serving API at `%s`", config.RestApiAddr)
+		err := http.ListenAndServe(config.RestApiAddr, server)
+		if err != nil {
+			panic(err)
+		}
+		wg.Done()
+	}()
+
+	wg.Wait()
 }

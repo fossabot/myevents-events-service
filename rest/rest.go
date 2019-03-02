@@ -9,7 +9,6 @@ import (
 	"github.com/danielpacak/myevents-events-service/persistence"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"log"
 	"net/http"
 	"time"
 )
@@ -35,7 +34,13 @@ func (h *eventsHandler) getById(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprint(w, `{"error"": "Internal server error"}`)
 		return
 	}
-	event, _ := h.repository.FindById(eventId)
+	event, err := h.repository.FindById(eventId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Header().Set("Content-Type", "application/json;charset=utf8")
+		_, _ = fmt.Fprint(w, `{"error": "event not found"}`)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json;charset=utf8")
 	_ = json.NewEncoder(w).Encode(&event)
@@ -102,21 +107,15 @@ func newEventsHandler(repository persistence.EventsRepository, emitter msgqueue.
 	}
 }
 
-func ServeAPI(addr string, repository persistence.EventsRepository, emitter msgqueue.EventEmitter) chan error {
-	log.Printf("Serving API at `%s`", addr)
+func NewAPIServer(repository persistence.EventsRepository, emitter msgqueue.EventEmitter) http.Handler {
 	eventsHandler := newEventsHandler(repository, emitter)
 	router := mux.NewRouter()
 	eventsRouter := router.PathPrefix("/events").Subrouter()
 
 	eventsRouter.Methods("GET").Path("/name/{name}").HandlerFunc(eventsHandler.getByName)
 	eventsRouter.Methods("GET").Path("/id/{id}").HandlerFunc(eventsHandler.getById)
-	eventsRouter.Methods("GET").Path("").HandlerFunc(eventsHandler.getAll)
+	eventsRouter.Methods("GET").Path("/").HandlerFunc(eventsHandler.getAll)
 	eventsRouter.Methods("POST").Path("").HandlerFunc(eventsHandler.create)
 
-	httpErrChan := make(chan error)
-
-	server := handlers.CORS()(router)
-
-	go func() { httpErrChan <- http.ListenAndServe(addr, server) }()
-	return httpErrChan
+	return handlers.CORS()(router)
 }

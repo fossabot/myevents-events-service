@@ -11,25 +11,25 @@ const (
 	EVENTS = "events"
 )
 
-type MongoEventsRepository struct {
+type mongoEventsRepository struct {
 	session *mgo.Session
 }
 
-func NewMongoEventsRepository(connection string) (*MongoEventsRepository, error) {
+func NewMongoEventsRepository(connection string) (persistence.EventsRepository, error) {
 	s, err := mgo.Dial(connection)
 	if err != nil {
 		return nil, err
 	}
-	return &MongoEventsRepository{
+	return &mongoEventsRepository{
 		session: s,
 	}, err
 }
 
-func (m *MongoEventsRepository) getFreshSession() *mgo.Session {
+func (m *mongoEventsRepository) getFreshSession() *mgo.Session {
 	return m.session.Copy()
 }
 
-func (m *MongoEventsRepository) Create(e persistence.Event) ([] byte, error) {
+func (m *mongoEventsRepository) Create(e persistence.Event) ([] byte, error) {
 	s := m.getFreshSession()
 	defer s.Close()
 	if !e.ID.Valid() {
@@ -41,7 +41,7 @@ func (m *MongoEventsRepository) Create(e persistence.Event) ([] byte, error) {
 	return []byte(e.ID), s.DB(DB).C(EVENTS).Insert(e)
 }
 
-func (m *MongoEventsRepository) FindById(id []byte) (persistence.Event, error) {
+func (m *mongoEventsRepository) FindById(id []byte) (persistence.Event, error) {
 	s := m.getFreshSession()
 	defer s.Close()
 	e := persistence.Event{}
@@ -49,7 +49,7 @@ func (m *MongoEventsRepository) FindById(id []byte) (persistence.Event, error) {
 	return e, err
 }
 
-func (m *MongoEventsRepository) FindByName(name string) (persistence.Event, error) {
+func (m *mongoEventsRepository) FindByName(name string) (persistence.Event, error) {
 	s := m.getFreshSession()
 	defer s.Close()
 	e := persistence.Event{}
@@ -57,7 +57,7 @@ func (m *MongoEventsRepository) FindByName(name string) (persistence.Event, erro
 	return e, err
 }
 
-func (m *MongoEventsRepository) FindAll() ([] persistence.Event, error) {
+func (m *mongoEventsRepository) FindAll() ([] persistence.Event, error) {
 	s := m.getFreshSession()
 	defer s.Close()
 	var events []persistence.Event
