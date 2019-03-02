@@ -27,9 +27,9 @@ type Hall struct {
 	Capacity int    `json:"capacity"`
 }
 
-type DatabaseHandler interface {
-	AddEvent(event Event) ([]byte, error)
-	FindEvent(id []byte) (Event, error)
-	FindEventByName(name string) (Event, error)
-	FindAllAvailableEvents() ([]Event, error)
+type EventsRepository interface {
+	Create(event Event) ([]byte, error)
+	FindById(id []byte) (Event, error)
+	FindByName(name string) (Event, error)
+	FindAll() ([]Event, error)
 }

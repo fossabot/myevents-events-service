@@ -9,54 +9,55 @@ import (
 	"github.com/danielpacak/myevents-events-service/persistence"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
-	"strings"
 	"time"
 )
 
-type eventServiceHandler struct {
-	dbhandler    persistence.DatabaseHandler
-	eventEmitter msgqueue.EventEmitter
+type eventsHandler struct {
+	repository persistence.EventsRepository
+	emitter    msgqueue.EventEmitter
 }
 
-func (eh *eventServiceHandler) findEventHandler(w http.ResponseWriter, r *http.Request) {
+func (h *eventsHandler) getById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	criteria, ok := vars["SearchCriteria"]
+	id, ok := vars["id"]
 	if !ok {
 		w.WriteHeader(400)
-		fmt.Fprintf(w, `{error: No search criteria found, you can either search by id via /id/4
-		to search by name via /name/coldplayconcert}`)
+		w.Header().Set("Content-Type", "application/json;charset=utf8")
+		_, _ = fmt.Fprint(w, `{"error"": "No id found in the path vars"}`)
 		return
 	}
-	searchkey, ok := vars["search"]
-	if !ok {
-		w.WriteHeader(400)
-		fmt.Fprintf(w, `{error: No search keys found, you can either search by id via /id/4
-		to search by name via /name/coldplayconcert}`)
-		return
-	}
-	var event persistence.Event
-	var err error
-	switch strings.ToLower(criteria) {
-	case "name":
-		event, err = eh.dbhandler.FindEventByName(searchkey)
-	case "id":
-		id, err := hex.DecodeString(searchkey)
-		if err == nil {
-			event, err = eh.dbhandler.FindEvent(id)
-		}
-	}
+	eventId, err := hex.DecodeString(id)
 	if err != nil {
-		w.WriteHeader(404)
-		fmt.Fprintf(w, "Error occured %s", err)
+		w.WriteHeader(500)
+		w.Header().Set("Content-Type", "application/json;charset=utf8")
+		_, _ = fmt.Fprint(w, `{"error"": "Internal server error"}`)
 		return
 	}
+	event, _ := h.repository.FindById(eventId)
+
 	w.Header().Set("Content-Type", "application/json;charset=utf8")
-	json.NewEncoder(w).Encode(&event)
+	_ = json.NewEncoder(w).Encode(&event)
 }
 
-func (eh *eventServiceHandler) allEventHandler(w http.ResponseWriter, r *http.Request) {
-	events, err := eh.dbhandler.FindAllAvailableEvents()
+func (h *eventsHandler) getByName(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	name, ok := vars["name"]
+	if !ok {
+		w.WriteHeader(400)
+		w.Header().Set("Content-Type", "application/json;charset=utf8")
+		_, _ = fmt.Fprint(w, `{"error"": "No name found in the path vars"}`)
+		return
+	}
+	event, _ := h.repository.FindByName(name)
+
+	w.Header().Set("Content-Type", "application/json;charset=utf8")
+	_ = json.NewEncoder(w).Encode(&event)
+}
+
+func (h *eventsHandler) getAll(w http.ResponseWriter, r *http.Request) {
+	events, err := h.repository.FindAll()
 	if err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, "{error: Error occured while trying to find all available events %s}", err)
@@ -70,50 +71,52 @@ func (eh *eventServiceHandler) allEventHandler(w http.ResponseWriter, r *http.Re
 	}
 }
 
-func (eh *eventServiceHandler) newEventHandler(w http.ResponseWriter, r *http.Request) {
+func (h *eventsHandler) create(w http.ResponseWriter, r *http.Request) {
 	event := persistence.Event{}
 	err := json.NewDecoder(r.Body).Decode(&event)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, "{error: error occured while decoding event data %s}", err)
+		_, _ = fmt.Fprintf(w, `{"message": "Error decoding event data", "error": "%s"}`, err)
 		return
 	}
-	id, err := eh.dbhandler.AddEvent(event)
+	eventId, err := h.repository.Create(event)
 	if nil != err {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, "{error: error occured while persisting event %d %s", id, err)
+		_, _ = fmt.Fprintf(w, `{"message": "Error persisting event", "error": "%s"}`, err)
 		return
 	}
 	msg := contracts.EventCreatedEvent{
-		ID:   hex.EncodeToString(id),
-		Name: event.Name,
-		// LocationID: event.Location.ID,
-		Start: time.Unix(event.StartDate, 0),
-		End:   time.Unix(event.EndDate, 0),
+		ID:         hex.EncodeToString(eventId),
+		Name:       event.Name,
+		LocationID: event.Location.ID.String(),
+		Start:      time.Unix(event.StartDate, 0),
+		End:        time.Unix(event.EndDate, 0),
 	}
-	eh.eventEmitter.Emit(&msg)
+	_ = h.emitter.Emit(&msg)
 }
 
-func newEventHandler(databaseHandler persistence.DatabaseHandler, emitter msgqueue.EventEmitter) *eventServiceHandler {
-	return &eventServiceHandler{
-		dbhandler:    databaseHandler,
-		eventEmitter: emitter,
+func newEventsHandler(repository persistence.EventsRepository, emitter msgqueue.EventEmitter) *eventsHandler {
+	return &eventsHandler{
+		repository: repository,
+		emitter:    emitter,
 	}
 }
 
-func ServeAPI(httpHandler string, databaseHandler persistence.DatabaseHandler, eventEmitter msgqueue.EventEmitter) chan error {
-	handler := newEventHandler(databaseHandler, eventEmitter)
+func ServeAPI(addr string, repository persistence.EventsRepository, emitter msgqueue.EventEmitter) chan error {
+	log.Printf("Serving API at `%s`", addr)
+	eventsHandler := newEventsHandler(repository, emitter)
 	router := mux.NewRouter()
 	eventsRouter := router.PathPrefix("/events").Subrouter()
 
-	eventsRouter.Methods("GET").Path("/{SearchCriteria}/{search}").HandlerFunc(handler.findEventHandler)
-	eventsRouter.Methods("GET").Path("").HandlerFunc(handler.allEventHandler)
-	eventsRouter.Methods("POST").Path("").HandlerFunc(handler.newEventHandler)
+	eventsRouter.Methods("GET").Path("/name/{name}").HandlerFunc(eventsHandler.getByName)
+	eventsRouter.Methods("GET").Path("/id/{id}").HandlerFunc(eventsHandler.getById)
+	eventsRouter.Methods("GET").Path("").HandlerFunc(eventsHandler.getAll)
+	eventsRouter.Methods("POST").Path("").HandlerFunc(eventsHandler.create)
 
 	httpErrChan := make(chan error)
 
 	server := handlers.CORS()(router)
 
-	go func() { httpErrChan <- http.ListenAndServe(httpHandler, server) }()
+	go func() { httpErrChan <- http.ListenAndServe(addr, server) }()
 	return httpErrChan
 }

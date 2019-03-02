@@ -8,22 +8,25 @@ import (
 var (
 	DBTypeDefault            = dblayer.DBTYPE("mongodb")
 	DBConnectionDefault      = "mongodb://127.0.0.1"
-	RestfulEPDefault         = "localhost:8181"
+	RestApiAddrDefault       = ":8181"
+	MetricsAddrDefault       = ":9100"
 	AMQPMessageBrokerDefault = "amqp://localhost:5672"
 )
 
 type ServiceConfig struct {
-	Databasetype      dblayer.DBTYPE `json:"databasetype"`
-	DBConnection      string         `json:"dbconnection"`
-	RestfulEndpoint   string         `json:"restfulapi_endpoint"`
-	AMQPMessageBroker string         `json:"amqp_message_broker"`
+	DatabaseType      dblayer.DBTYPE
+	DBConnection      string
+	RestApiAddr       string
+	MetricsAddr       string
+	AMQPMessageBroker string
 }
 
 func ExtractConfiguration() (ServiceConfig, error) {
 	conf := ServiceConfig{
 		DBTypeDefault,
 		DBConnectionDefault,
-		RestfulEPDefault,
+		RestApiAddrDefault,
+		MetricsAddrDefault,
 		AMQPMessageBrokerDefault,
 	}
 	if brokerUrl := os.Getenv("AMQP_BROKER_URL"); brokerUrl != "" {
@@ -33,7 +36,7 @@ func ExtractConfiguration() (ServiceConfig, error) {
 		conf.DBConnection = mongoUrl
 	}
 	if listenUrl := os.Getenv("LISTEN_URL"); listenUrl != "" {
-		conf.RestfulEndpoint = listenUrl
+		conf.RestApiAddr = listenUrl
 	}
 
 	return conf, nil

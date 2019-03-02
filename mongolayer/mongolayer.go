@@ -8,30 +8,29 @@ import (
 
 const (
 	DB     = "myevents"
-	USERS  = "users"
 	EVENTS = "events"
 )
 
-type MongoDBLayer struct {
+type MongoEventsRepository struct {
 	session *mgo.Session
 }
 
-func NewMongoDBLayer(connection string) (*MongoDBLayer, error) {
+func NewMongoDBLayer(connection string) (*MongoEventsRepository, error) {
 	s, err := mgo.Dial(connection)
 	if err != nil {
 		return nil, err
 	}
-	return &MongoDBLayer{
+	return &MongoEventsRepository{
 		session: s,
 	}, err
 }
 
-func (mgoLayer *MongoDBLayer) getFreshSession() *mgo.Session {
-	return mgoLayer.session.Copy()
+func (m *MongoEventsRepository) getFreshSession() *mgo.Session {
+	return m.session.Copy()
 }
 
-func (mgoLayer *MongoDBLayer) AddEvent(e persistence.Event) ([] byte, error) {
-	s := mgoLayer.getFreshSession()
+func (m *MongoEventsRepository) Create(e persistence.Event) ([] byte, error) {
+	s := m.getFreshSession()
 	defer s.Close()
 	if !e.ID.Valid() {
 		e.ID = bson.NewObjectId()
@@ -42,26 +41,26 @@ func (mgoLayer *MongoDBLayer) AddEvent(e persistence.Event) ([] byte, error) {
 	return []byte(e.ID), s.DB(DB).C(EVENTS).Insert(e)
 }
 
-func (mgoLayer *MongoDBLayer) FindEvent(id []byte) (persistence.Event, error) {
-	s := mgoLayer.getFreshSession()
+func (m *MongoEventsRepository) FindById(id []byte) (persistence.Event, error) {
+	s := m.getFreshSession()
 	defer s.Close()
 	e := persistence.Event{}
 	err := s.DB(DB).C(EVENTS).FindId(bson.ObjectId(id)).One(&e)
 	return e, err
 }
 
-func (mgoLayer *MongoDBLayer) FindEventByName(name string) (persistence.Event, error) {
-	s := mgoLayer.getFreshSession()
+func (m *MongoEventsRepository) FindByName(name string) (persistence.Event, error) {
+	s := m.getFreshSession()
 	defer s.Close()
 	e := persistence.Event{}
 	err := s.DB(DB).C(EVENTS).Find(bson.M{"name": name}).One(&e)
 	return e, err
 }
 
-func (mgoLayer *MongoDBLayer) FindAllAvailableEvents() ([] persistence.Event, error) {
-	s := mgoLayer.getFreshSession()
+func (m *MongoEventsRepository) FindAll() ([] persistence.Event, error) {
+	s := m.getFreshSession()
 	defer s.Close()
-	events := []persistence.Event{}
+	var events []persistence.Event
 	err := s.DB(DB).C(EVENTS).Find(nil).All(&events)
 	return events, err
 }

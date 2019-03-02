@@ -1,6 +1,9 @@
-# myevents-event-service
+# [MyEvents](https://github.com/danielpacak/myevents) :: Events Service
 
 [![Build Status](https://travis-ci.org/danielpacak/myevents-events-service.svg?branch=master)](https://travis-ci.org/danielpacak/myevents-events-service)
+
+The events service handles the events, their locations, and changes that happen to them.
+It's part of the [MyEvents](https://github.com/danielpacak/myevents) application.
 
 ## Building and running
 
