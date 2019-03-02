@@ -1,4 +1,4 @@
-package mongolayer
+package mongo
 
 import (
 	"github.com/danielpacak/myevents-events-service/persistence"
@@ -15,7 +15,7 @@ type MongoEventsRepository struct {
 	session *mgo.Session
 }
 
-func NewMongoDBLayer(connection string) (*MongoEventsRepository, error) {
+func NewMongoEventsRepository(connection string) (*MongoEventsRepository, error) {
 	s, err := mgo.Dial(connection)
 	if err != nil {
 		return nil, err

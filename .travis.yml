@@ -11,10 +11,11 @@ install: true
 
 script:
   - go vet $(go list ./... | grep -v vendor)
+  - go test -v -coverprofile=coverage.txt -covermode=atomic ./...
   - go build
-  - go test -v ./...
   - docker image build -t $DOCKER_USERNAME/myevents-events-service:$TRAVIS_BRANCH .
 
 after_success:
+  - bash <(curl -s https://codecov.io/bash)
   - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
   - docker push $DOCKER_USERNAME/myevents-events-service:$TRAVIS_BRANCH

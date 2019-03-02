@@ -2,10 +2,10 @@ package dblayer
 
 import (
 	"github.com/danielpacak/myevents-contracts/lib/msgqueue"
-	"github.com/danielpacak/myevents-events-service/mongolayer"
-	"github.com/danielpacak/myevents-events-service/persistence"
-	"github.com/streadway/amqp"
 	msgqueue_amqp "github.com/danielpacak/myevents-contracts/lib/msgqueue/amqp"
+	"github.com/danielpacak/myevents-events-service/persistence"
+	"github.com/danielpacak/myevents-events-service/persistence/mongo"
+	"github.com/streadway/amqp"
 	"log"
 )
 
@@ -20,7 +20,7 @@ func NewEventsRepository(options DBTYPE, connection string) (persistence.EventsR
 
 	switch options {
 	case MONGODB:
-		return mongolayer.NewMongoDBLayer(connection)
+		return mongo.NewMongoEventsRepository(connection)
 	}
 	return nil, nil
 }

@@ -2,6 +2,7 @@ package rest
 
 import (
 	"github.com/danielpacak/myevents-events-service/persistence"
+	"github.com/danielpacak/myevents-events-service/persistence/mock"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -15,7 +16,7 @@ func TestServeAPI(t *testing.T) {
 
 		t.Run("should return 200", func(t *testing.T) {
 			// setup
-			repository := new(persistence.MockEventsRepository)
+			repository := new(mock.MockEventsRepository)
 			// given
 			handler := eventsHandler{
 				repository: repository,
