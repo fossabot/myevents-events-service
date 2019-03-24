@@ -2,7 +2,7 @@ package rest
 
 import (
 	"errors"
-	"github.com/danielpacak/myevents-events-service/persistence"
+	"github.com/danielpacak/myevents-events-service/domain"
 	"github.com/danielpacak/myevents-events-service/persistence/mock"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
@@ -17,7 +17,7 @@ func TestServeAPI(t *testing.T) {
 
 		t.Run("should return 200", func(t *testing.T) {
 			// setup
-			repository := new(mock.MockEventsRepository)
+			repository := new(mock.EventsRepository)
 			// given
 			handler := eventsHandler{
 				repository: repository,
@@ -26,7 +26,7 @@ func TestServeAPI(t *testing.T) {
 			request := httptest.NewRequest("GET", "/id/1234", nil)
 			response := httptest.NewRecorder()
 			// and
-			event := persistence.Event{}
+			event := domain.Event{}
 			eventId := []byte{18, 52}
 			// and
 			repository.On("FindById", eventId).Return(event, nil)
@@ -46,7 +46,7 @@ func TestServeAPI(t *testing.T) {
 
 		t.Run("should return 400", func(t *testing.T) {
 			// setup
-			repository := new(mock.MockEventsRepository)
+			repository := new(mock.EventsRepository)
 			// given
 			handler := eventsHandler{
 				repository: repository,
@@ -57,7 +57,7 @@ func TestServeAPI(t *testing.T) {
 			// and
 			eventId := []byte{18, 52}
 			// and
-			repository.On("FindById", eventId).Return(persistence.Event{}, errors.New("not found"))
+			repository.On("FindById", eventId).Return(domain.Event{}, errors.New("not found"))
 			// when
 			router := mux.NewRouter()
 			router.HandleFunc("/id/{id}", handler.getById)

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/danielpacak/myevents-contracts"
 	"github.com/danielpacak/myevents-contracts/lib/msgqueue"
+	"github.com/danielpacak/myevents-events-service/domain"
 	"github.com/danielpacak/myevents-events-service/persistence"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -77,7 +78,7 @@ func (h *eventsHandler) getAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *eventsHandler) create(w http.ResponseWriter, r *http.Request) {
-	event := persistence.Event{}
+	event := domain.Event{}
 	err := json.NewDecoder(r.Body).Decode(&event)
 	if err != nil {
 		w.WriteHeader(500)
