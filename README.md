@@ -26,8 +26,8 @@ It's part of the [MyEvents](https://github.com/danielpacak/myevents) application
    ```
 3. Choose a message broker, either [RabbitMQ](https://www.rabbitmq.com/) or
    [Apache Kafka](https://kafka.apache.org/).
-   3. RabbitMQ
-      3. Start RabbitMQ in Docker container:
+   1. RabbitMQ
+      1. Start RabbitMQ in Docker container:
          ```
          $ docker run -d --rm -p 5672:5672 -p 15672:15672 --name rabbitmq rabbitmq:3-management
          ```
@@ -35,8 +35,8 @@ It's part of the [MyEvents](https://github.com/danielpacak/myevents) application
          `amqp://localhost:5672` and open the management UI in your browser at
          [http://localhost:15672](http://localhost:15672). The default administrator username
          and password are `guest` and `guest`.
-   3. Apache Kafka
-      4. Start [Apache Zookeeper](https://zookeeper.apache.org/) in Docker container:
+   2. Apache Kafka
+      1. Start [Apache Zookeeper](https://zookeeper.apache.org/) in Docker container:
          ```
          $ docker run -d --rm --name zookeeper --network host \
            -e ZOOKEEPER_CLIENT_PORT=2181 \
@@ -44,7 +44,7 @@ It's part of the [MyEvents](https://github.com/danielpacak/myevents) application
            -e ZOOKEEPER_LOG4J_ROOT_LOGLEVEL=ERROR \
            confluentinc/cp-zookeeper:5.1.2
          ```
-      5. Start Kafka broker in Docker container:
+      2. Start Kafka broker in Docker container:
          ```
          $ docker run -d --rm --name kafka --network host \
            -e KAFKA_ZOOKEEPER_CONNECT="localhost:2181" \
@@ -74,3 +74,8 @@ $ docker container run -d --name events \
      -p 9100:9100 \
      danielpacak/myevents-events-service:latest
 ```
+
+## References
+
+1. [Writing a Go client for your RESTful API](https://medium.com/@marcus.olsson/writing-a-go-client-for-your-restful-api-c193a2f4998c)
+2. [Functional options for friendly APIs](https://dave.cheney.net/2014/10/17/functional-options-for-friendly-apis)
