@@ -25,5 +25,11 @@ func (m *EventsRepository) FindByName(name string) (domain.Event, error) {
 
 func (m *EventsRepository) FindAll() ([]domain.Event, error) {
 	args := m.Called()
-	return args.Get(0).([]domain.Event), args.Error(1)
+	var events []domain.Event
+	rawEvents := args.Get(0)
+	if rawEvents != nil {
+		events = rawEvents.([]domain.Event)
+	}
+
+	return events, args.Error(1)
 }

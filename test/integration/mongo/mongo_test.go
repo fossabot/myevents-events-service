@@ -11,10 +11,11 @@ import (
 )
 
 func TestEventsRepository(t *testing.T) {
-	// FIXME Do not skip this test
-	t.Skip("Configure Docker Compose or use docker-skd")
+	if testing.Short() {
+		t.Skip("Integration test")
+	}
 	repo, err := mongo.NewMongoEventsRepository(&config.MongoDBConfig{
-		ConnectionURL: "mongodb://127.0.0.1",
+		ConnectionURL: "mongodb://mongo:27017",
 		DatabaseName:  "testdb",
 	})
 	require.NoError(t, err)

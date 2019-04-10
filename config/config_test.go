@@ -24,6 +24,9 @@ func TestExtractConfig(t *testing.T) {
 			AMQPConfig: &AMQPConfig{
 				ConnectionURI: "amqp://localhost:5672",
 			},
+			KafkaConfig: &KafkaConfig{
+				Brokers: "localhost:9092",
+			},
 		}, config)
 	})
 

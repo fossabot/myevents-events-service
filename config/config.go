@@ -22,6 +22,8 @@ const (
 	DefaultMongoDBDatabaseName  = "myevents"
 
 	DefaultAMQPConnectionURI = "amqp://localhost:5672"
+
+	DefaultKafkaBrokers = "localhost:9092"
 )
 
 type AppConfig struct {
@@ -61,6 +63,9 @@ func ExtractConfig() AppConfig {
 		AMQPConfig: &AMQPConfig{
 			ConnectionURI: DefaultAMQPConnectionURI,
 		},
+		KafkaConfig: &KafkaConfig{
+			Brokers: DefaultKafkaBrokers,
+		},
 	}
 
 	if connectionURL := os.Getenv("MONGODB_CONNECTION_URL"); connectionURL != "" {
@@ -69,11 +74,12 @@ func ExtractConfig() AppConfig {
 	if dbName := os.Getenv("MONGODB_DATABASE_NAME"); dbName != "" {
 		conf.MongoDBConfig.DatabaseName = dbName
 	}
-
 	if brokerUrl := os.Getenv("AMQP_CONNECTION_URI"); brokerUrl != "" {
 		conf.AMQPConfig.ConnectionURI = brokerUrl
 	}
-
+	if brokerUrl := os.Getenv("KAFKA_BROKERS"); brokerUrl != "" {
+		conf.KafkaConfig.Brokers = brokerUrl
+	}
 	if listenUrl := os.Getenv("LISTEN_URL"); listenUrl != "" {
 		conf.RestApiAddr = listenUrl
 	}

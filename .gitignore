@@ -1,3 +1,9 @@
 .idea/
 coverage.txt
 myevents-events-service
+
+test/integration/kafka/kafka_test
+test/integration/mongo/mongo_test
+test/integration/rest/rest_test
+
+test/component/component_test

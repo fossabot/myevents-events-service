@@ -6,12 +6,18 @@
 The events service handles the events, their locations, and changes that happen to them.
 It's part of the [MyEvents](https://github.com/danielpacak/myevents) application.
 
+## Architecture
+
+![Architecture](docs/architecture.png)
+
 ## Configuration
 
-| Name                      | Default Value       | Description            |
-|---------------------------|---------------------|------------------------|
-| MONGODB_CONNECTION_URL    | mongodb://127.0.0.1 | MongoDB connection URL |
-| MONGODB_DATABASE_NAME     | myevents            | MongoDB database name  |
+| Name                      | Default Value         | Description            |
+|---------------------------|-----------------------|------------------------|
+| MONGODB_CONNECTION_URL    | mongodb://127.0.0.1   | MongoDB connection URL |
+| MONGODB_DATABASE_NAME     | myevents              | MongoDB database name  |
+| AMQP_CONNECTION_URI       | amqp://localhost:5672 | ? |
+| KAFKA_BROKERS             | localhost:9092        | ? |
 
 ## Building and running
 
@@ -79,3 +85,5 @@ $ docker container run -d --name events \
 
 1. [Writing a Go client for your RESTful API](https://medium.com/@marcus.olsson/writing-a-go-client-for-your-restful-api-c193a2f4998c)
 2. [Functional options for friendly APIs](https://dave.cheney.net/2014/10/17/functional-options-for-friendly-apis)
+3. [GopherCon 2018: Kat Zien - How Do You Structure Your Go Apps](https://www.youtube.com/watch?v=oL6JBUk6tj0)
+4. [Integration Test With Database in Golang](https://hackernoon.com/integration-test-with-database-in-golang-355dc123fdc9)

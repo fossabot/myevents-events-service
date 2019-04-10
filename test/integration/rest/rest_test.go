@@ -14,6 +14,9 @@ import (
 )
 
 func TestRestAdapter(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Integration test")
+	}
 
 	t.Run("should handle GET /events/ request", func(t *testing.T) {
 		var server *http.Server

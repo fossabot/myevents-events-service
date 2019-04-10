@@ -7,6 +7,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"log"
+	"time"
 )
 
 const (
@@ -20,7 +21,7 @@ type mongoEventsRepository struct {
 
 func NewMongoEventsRepository(config *config.MongoDBConfig) (persistence.EventsRepository, error) {
 	log.Printf("Connecting to database at %s", config.ConnectionURL)
-	session, err := mgo.Dial(config.ConnectionURL)
+	session, err := mgo.DialWithTimeout(config.ConnectionURL,1*time.Minute)
 	if err != nil {
 		return nil, err
 	}

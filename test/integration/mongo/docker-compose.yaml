@@ -1,0 +1,8 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:latest
+  mongo_test:
+    build: .
+    depends_on:
+      - mongo

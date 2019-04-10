@@ -1,0 +1,24 @@
+version: "3"
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.1.2
+    network_mode: host
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_LOG4J_ROOT_LOGLEVEL: "ERROR"
+
+  kafka:
+    image: confluentinc/cp-kafka:5.1.2
+    network_mode: host
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka=ERROR,kafka.controller=ERROR,kafka.log.LogCleaner=ERROR,kafka.producer.async.DefaultEventHandler=ERROR,kafka.request.logger=ERROR,state.change.logger=ERROR"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+
+  component_test:
+    build: .

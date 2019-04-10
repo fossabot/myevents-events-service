@@ -19,6 +19,11 @@ type eventsHandler struct {
 	emitter    msgqueue.EventEmitter
 }
 
+type ResponseError struct {
+	StatusCode int    `json:"statusCode"`
+	Message    string `json:"error"`
+}
+
 func (h *eventsHandler) getById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, ok := vars["id"]
@@ -65,15 +70,14 @@ func (h *eventsHandler) getByName(w http.ResponseWriter, r *http.Request) {
 func (h *eventsHandler) getAll(w http.ResponseWriter, r *http.Request) {
 	events, err := h.repository.FindAll()
 	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "{error: Error occured while trying to find all available events %s}", err)
+		h.writeInternalServerErrorResponse(w)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json;charset=utf8")
 	err = json.NewEncoder(w).Encode(&events)
 	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "{error: Error occured while trying to encode events to JSON %s}", err)
+		h.writeInternalServerErrorResponse(w)
+		return
 	}
 }
 
@@ -81,13 +85,13 @@ func (h *eventsHandler) create(w http.ResponseWriter, r *http.Request) {
 	event := domain.Event{}
 	err := json.NewDecoder(r.Body).Decode(&event)
 	if err != nil {
-		w.WriteHeader(500)
+		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = fmt.Fprintf(w, `{"message": "Error decoding event data", "error": "%s"}`, err)
 		return
 	}
 	eventId, err := h.repository.Create(event)
 	if nil != err {
-		w.WriteHeader(500)
+		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = fmt.Fprintf(w, `{"message": "Error persisting event", "error": "%s"}`, err)
 		return
 	}
@@ -101,17 +105,29 @@ func (h *eventsHandler) create(w http.ResponseWriter, r *http.Request) {
 	_ = h.emitter.Emit(&msg)
 }
 
-func newEventsHandler(repository persistence.EventsRepository, emitter msgqueue.EventEmitter) *eventsHandler {
-	return &eventsHandler{
-		repository: repository,
-		emitter:    emitter,
+func (h *eventsHandler) writeErrorResponse(w http.ResponseWriter, statusCode int, message string) {
+	w.WriteHeader(statusCode)
+	err := json.NewEncoder(w).Encode(&ResponseError{
+		StatusCode: statusCode,
+		Message:    message,
+	})
+	if err != nil {
+		panic(err)
 	}
 }
 
+func (h *eventsHandler) writeInternalServerErrorResponse(w http.ResponseWriter) {
+	h.writeErrorResponse(w, http.StatusInternalServerError, "Internal server error")
+}
+
 func NewAPIServer(repository persistence.EventsRepository, emitter msgqueue.EventEmitter) http.Handler {
-	eventsHandler := newEventsHandler(repository, emitter)
 	router := mux.NewRouter()
 	eventsRouter := router.PathPrefix("/events").Subrouter()
+
+	eventsHandler := &eventsHandler{
+		repository: repository,
+		emitter:    emitter,
+	}
 
 	eventsRouter.Methods("GET").Path("/name/{name}").HandlerFunc(eventsHandler.getByName)
 	eventsRouter.Methods("GET").Path("/id/{id}").HandlerFunc(eventsHandler.getById)
