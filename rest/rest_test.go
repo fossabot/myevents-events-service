@@ -32,7 +32,7 @@ func TestServeAPI(t *testing.T) {
 			assert.Equal(t, http.StatusOK, response.Code)
 			assert.Equal(t, "application/json;charset=utf8", response.Header().Get("Content-Type"))
 			// and
-			expectedResponse := `{"ID":"","Name":"","Duration":0,"StartDate":0,"EndDate":0,"Location":{"ID":"","Name":"","Address":"","Country":"","OpenTime":0,"CloseTime":0,"Halls":null}}`
+			expectedResponse := `{"ID":"","Name":"","Duration":0,"StartDate":"0001-01-01T00:00:00Z","EndDate":"0001-01-01T00:00:00Z","Location":{"ID":"","Name":"","Address":"","Country":"","OpenTime":0,"CloseTime":0,"Halls":null}}`
 			assert.JSONEq(t, expectedResponse, response.Body.String())
 			// finally
 			repository.AssertExpectations(t)

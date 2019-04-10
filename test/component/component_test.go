@@ -3,5 +3,7 @@ package component
 import "testing"
 
 func TestComponent(t * testing.T) {
-	t.Logf("Implement me")
+	if testing.Short() {
+		t.Skip("Component test")
+	}
 }

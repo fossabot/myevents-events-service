@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"encoding/hex"
 	"github.com/danielpacak/myevents-events-service/config"
 	"github.com/danielpacak/myevents-events-service/domain"
 	"github.com/danielpacak/myevents-events-service/persistence/mongo"
@@ -8,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"gopkg.in/mgo.v2/bson"
 	"testing"
+	"time"
 )
 
 func TestEventsRepository(t *testing.T) {
@@ -23,10 +25,11 @@ func TestEventsRepository(t *testing.T) {
 	events, err := repo.FindAll()
 	assert.Empty(t, events)
 
+	t.Logf("Creating event")
 	eventId, err := repo.Create(domain.Event{
 		Name:      "Czarownice z Eastwick",
-		StartDate: 1234243,
-		EndDate:   341342,
+		StartDate: time.Now(),
+		EndDate:   time.Now(),
 		Duration:  34234,
 		Location: domain.Location{
 			Name:      "Teatr Syrena",
@@ -43,9 +46,12 @@ func TestEventsRepository(t *testing.T) {
 		},
 	})
 	require.NoError(t, err)
+	t.Logf("Done creating event %s", hex.EncodeToString(eventId))
 
+	t.Logf("Finding event by ID: %s", hex.EncodeToString(eventId))
 	foundById, err := repo.FindById(eventId)
 	require.NoError(t, err)
+	t.Logf("Done finding event by ID: %s", hex.EncodeToString(eventId))
 
 	assert.Equal(t, bson.ObjectId(eventId), foundById.ID)
 	assert.Equal(t, "Czarownice z Eastwick", foundById.Name)

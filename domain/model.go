@@ -1,13 +1,16 @@
 package domain
 
-import "gopkg.in/mgo.v2/bson"
+import (
+	"gopkg.in/mgo.v2/bson"
+	"time"
+)
 
 type Event struct {
 	ID        bson.ObjectId `bson:"_id"`
 	Name      string
 	Duration  int
-	StartDate int64
-	EndDate   int64
+	StartDate time.Time
+	EndDate   time.Time
 	Location  Location
 }
 

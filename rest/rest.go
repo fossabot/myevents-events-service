@@ -11,7 +11,6 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"net/http"
-	"time"
 )
 
 type eventsHandler struct {
@@ -99,8 +98,8 @@ func (h *eventsHandler) create(w http.ResponseWriter, r *http.Request) {
 		ID:         hex.EncodeToString(eventId),
 		Name:       event.Name,
 		LocationID: event.Location.ID.String(),
-		Start:      time.Unix(event.StartDate, 0),
-		End:        time.Unix(event.EndDate, 0),
+		Start:      event.StartDate,
+		End:        event.EndDate,
 	}
 	_ = h.emitter.Emit(&msg)
 }
