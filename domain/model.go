@@ -7,11 +7,11 @@ import (
 
 type Event struct {
 	ID        bson.ObjectId `bson:"_id"`
-	Name      string
-	Duration  int
-	StartDate time.Time
-	EndDate   time.Time
-	Location  Location
+	Name      string        `json:"name"`
+	Duration  int           `json:"duration"`
+	StartDate time.Time     `json:"start_date"`
+	EndDate   time.Time     `json:"end_date"`
+	Location  Location      `json:"location"`
 }
 
 type Location struct {

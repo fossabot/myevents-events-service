@@ -16,7 +16,7 @@ func TestEventsRepository(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Integration test")
 	}
-	repo, err := mongo.NewMongoEventsRepository(&config.MongoDBConfig{
+	repo, err := mongo.NewMongoEventsRepository(config.MongoDBConfig{
 		ConnectionURL: "mongodb://mongo:27017",
 		DatabaseName:  "testdb",
 	})

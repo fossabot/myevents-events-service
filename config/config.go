@@ -4,46 +4,27 @@ import (
 	"os"
 )
 
-type DatabaseType string
-type BrokerType string
-
 const (
-	MongoDB DatabaseType = "mongodb"
-	AMQP    BrokerType   = "AMQP"
-	Kafka   BrokerType   = "Kafka"
-
-	DatabaseTypeDefault = MongoDB
-	BrokerTypeDefault   = AMQP
-
 	RestApiAddrDefault = ":8181"
 	MetricsAddrDefault = ":9100"
 
 	DefaultMongoDBConnectionURL = "mongodb://127.0.0.1"
-	DefaultMongoDBDatabaseName  = "myevents"
-
-	DefaultAMQPConnectionURI = "amqp://localhost:5672"
+	DefaultMongoDBDatabaseName  = "events-svc"
 
 	DefaultKafkaBrokers = "localhost:9092"
 )
 
 type AppConfig struct {
-	DatabaseType DatabaseType
-	RestApiAddr  string
-	MetricsAddr  string
-	BrokerType   BrokerType
+	RestApiAddr string
+	MetricsAddr string
 
-	MongoDBConfig *MongoDBConfig
-	AMQPConfig    *AMQPConfig
-	KafkaConfig   *KafkaConfig
+	MongoDBConfig MongoDBConfig
+	KafkaConfig   KafkaConfig
 }
 
 type MongoDBConfig struct {
 	ConnectionURL string
 	DatabaseName  string
-}
-
-type AMQPConfig struct {
-	ConnectionURI string
 }
 
 type KafkaConfig struct {
@@ -52,36 +33,31 @@ type KafkaConfig struct {
 
 func ExtractConfig() AppConfig {
 	conf := AppConfig{
-		RestApiAddr:  RestApiAddrDefault,
-		MetricsAddr:  MetricsAddrDefault,
-		DatabaseType: DatabaseTypeDefault,
-		BrokerType:   BrokerTypeDefault,
-		MongoDBConfig: &MongoDBConfig{
+		RestApiAddr: RestApiAddrDefault,
+		MetricsAddr: MetricsAddrDefault,
+		MongoDBConfig: MongoDBConfig{
 			ConnectionURL: DefaultMongoDBConnectionURL,
 			DatabaseName:  DefaultMongoDBDatabaseName,
 		},
-		AMQPConfig: &AMQPConfig{
-			ConnectionURI: DefaultAMQPConnectionURI,
-		},
-		KafkaConfig: &KafkaConfig{
+		KafkaConfig: KafkaConfig{
 			Brokers: DefaultKafkaBrokers,
 		},
 	}
 
-	if connectionURL := os.Getenv("MONGODB_CONNECTION_URL"); connectionURL != "" {
+	if connectionURL := os.Getenv("EVENTS_SVC_MONGODB_CONNECTION_URL"); connectionURL != "" {
 		conf.MongoDBConfig.ConnectionURL = connectionURL
 	}
-	if dbName := os.Getenv("MONGODB_DATABASE_NAME"); dbName != "" {
+	if dbName := os.Getenv("EVENTS_SVC_MONGODB_DATABASE_NAME"); dbName != "" {
 		conf.MongoDBConfig.DatabaseName = dbName
 	}
-	if brokerUrl := os.Getenv("AMQP_CONNECTION_URI"); brokerUrl != "" {
-		conf.AMQPConfig.ConnectionURI = brokerUrl
-	}
-	if brokerUrl := os.Getenv("KAFKA_BROKERS"); brokerUrl != "" {
+	if brokerUrl := os.Getenv("EVENTS_SVC_KAFKA_BROKERS"); brokerUrl != "" {
 		conf.KafkaConfig.Brokers = brokerUrl
 	}
-	if listenUrl := os.Getenv("LISTEN_URL"); listenUrl != "" {
+	if listenUrl := os.Getenv("EVENTS_SVC_REST_API_TCP_ADDRESS"); listenUrl != "" {
 		conf.RestApiAddr = listenUrl
+	}
+	if metricsUrl := os.Getenv("EVENTS_SVC_METRICS_TCP_ADDRESS"); metricsUrl != "" {
+		conf.MetricsAddr = metricsUrl
 	}
 
 	return conf

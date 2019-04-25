@@ -12,12 +12,14 @@ It's part of the [MyEvents](https://github.com/danielpacak/myevents) application
 
 ## Configuration
 
-| Name                      | Default Value         | Description            |
-|---------------------------|-----------------------|------------------------|
-| MONGODB_CONNECTION_URL    | mongodb://127.0.0.1   | MongoDB connection URL |
-| MONGODB_DATABASE_NAME     | myevents              | MongoDB database name  |
-| AMQP_CONNECTION_URI       | amqp://localhost:5672 | ? |
-| KAFKA_BROKERS             | localhost:9092        | ? |
+| Name                                | Default Value         | Description            |
+|-------------------------------------|-----------------------|------------------------|
+| `EVENTS_SVC_MONGODB_CONNECTION_URL` | `mongodb://127.0.0.1` | MongoDB connection URL |
+| `EVENTS_SVC_MONGODB_DATABASE_NAME`  | `events-svc`          | MongoDB database name  |
+| `EVENTS_SVC_KAFKA_BROKERS`          | `localhost:9092`      | ? |
+| `EVENTS_SVC_OUTBOUND_TOPIC`         | `myevents.events`     | ? |
+| `EVENTS_SVC_REST_API_TCP_ADDRESS`   | `:8181`               | ? |
+| `EVENTS_SVC_METRICS_TCP_ADDRESS`    | `:9100`               | ? |
 
 ## Building and running
 
@@ -26,60 +28,25 @@ It's part of the [MyEvents](https://github.com/danielpacak/myevents) application
    $ go get https://github.com/danielpacak/myevents-event-service.git
    $ cd $GOPATH/src/github.com/danielpacak/myevents-event-service
    ```
-2. Start [MongoDB](https://www.mongodb.com) in Docker container:
+2. Build executable:
    ```
-   $ docker run -d --rm -p 27017:27017 --name events-db mongo:latest
+   $ GOOS=linux go build
    ```
-3. Choose a message broker, either [RabbitMQ](https://www.rabbitmq.com/) or
-   [Apache Kafka](https://kafka.apache.org/).
-   1. RabbitMQ
-      1. Start RabbitMQ in Docker container:
-         ```
-         $ docker run -d --rm -p 5672:5672 -p 15672:15672 --name rabbitmq rabbitmq:3-management
-         ```
-         After starting the container, you will be able to open an AMQP connection to
-         `amqp://localhost:5672` and open the management UI in your browser at
-         [http://localhost:15672](http://localhost:15672). The default administrator username
-         and password are `guest` and `guest`.
-   2. Apache Kafka
-      1. Start [Apache Zookeeper](https://zookeeper.apache.org/) in Docker container:
-         ```
-         $ docker run -d --rm --name zookeeper --network host \
-           -e ZOOKEEPER_CLIENT_PORT=2181 \
-           -e ZOOKEEPER_TICK_TIME=2000 \
-           -e ZOOKEEPER_LOG4J_ROOT_LOGLEVEL=ERROR \
-           confluentinc/cp-zookeeper:5.1.2
-         ```
-      2. Start Kafka broker in Docker container:
-         ```
-         $ docker run -d --rm --name kafka --network host \
-           -e KAFKA_ZOOKEEPER_CONNECT="localhost:2181" \
-           -e KAFKA_ADVERTISED_LISTENERS="PLAINTEXT://localhost:9092" \
-           confluentinc/cp-kafka:5.1.2
-         ```
-
-### Building and running locally
-
-```
-$ go build
-$ ./myevents-event-service
-```
-
-### Building and running with Docker
-
-```
-$ GOOS=linux go build
-$ docker image build -t danielpacak/myevents-events-service .
-```
-
-```
-$ docker container run -d --name events \
-     -e AMQP_BROKER_URL=amqp://guest:guest@localhost:5672/ \
-     -e MONGO_URL=mongodb://localhost:27017/events \
-     -p 8181:8181 \
-     -p 9100:9100 \
-     danielpacak/myevents-events-service:latest
-```
+3. Start the backing services:
+   ```
+   $ docker-compose up -d
+   ```
+4. Create a sample event with curl:
+   ```
+   $ curl --header "Content-Type: application/json" \
+     --request POST \
+     --data '{"name": "Some event"}' \
+     http://localhost:8181/events
+   ```
+5. Navigate to Mongo Express at [http://localhost:8081](http://localhost:8081) and make sure
+   that the corresponding document was created in events collection.
+6. Navigate to Control Center at [http://localhost:9021](http://localhost:9021) and make sure
+   that the corresponding message was published to the outbound topic.
 
 ## References
 

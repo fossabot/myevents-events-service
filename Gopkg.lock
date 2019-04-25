@@ -27,12 +27,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d34b80466e0411d29dac61a9ffd70affb069cbf3f895350b776e8b4755a5a9b7"
+  digest = "1:3871155cf49c037ac6fb2ac9c19d6b78d8d4a3c658ac4598a0d680540e908a1d"
   name = "github.com/danielpacak/myevents-contracts"
   packages = [
     ".",
     "lib/msgqueue",
-    "lib/msgqueue/amqp",
     "lib/msgqueue/kafka",
   ]
   pruneopts = "UT"
@@ -191,14 +190,6 @@
   revision = "3113b8401b8a98917cde58f8bbd42a1b1c03b1fd"
 
 [[projects]]
-  branch = "master"
-  digest = "1:baa0e36ba787113501e02a40cd45e3d17b216285bbaa3dabbc1b26e626ab4a39"
-  name = "github.com/streadway/amqp"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "30f8ed68076eedf14990dafc696f469f58fc1342"
-
-[[projects]]
   digest = "1:ac83cf90d08b63ad5f7e020ef480d319ae890c208f8524622a2f3136e2686b02"
   name = "github.com/stretchr/objx"
   packages = ["."]
@@ -239,12 +230,10 @@
     "github.com/Shopify/sarama",
     "github.com/danielpacak/myevents-contracts",
     "github.com/danielpacak/myevents-contracts/lib/msgqueue",
-    "github.com/danielpacak/myevents-contracts/lib/msgqueue/amqp",
     "github.com/danielpacak/myevents-contracts/lib/msgqueue/kafka",
     "github.com/gorilla/handlers",
     "github.com/gorilla/mux",
     "github.com/prometheus/client_golang/prometheus",
-    "github.com/streadway/amqp",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",
     "github.com/stretchr/testify/require",

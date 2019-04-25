@@ -15,13 +15,13 @@ const (
 )
 
 type mongoEventsRepository struct {
-	config  *config.MongoDBConfig
+	config  config.MongoDBConfig
 	session *mgo.Session
 }
 
-func NewMongoEventsRepository(config *config.MongoDBConfig) (persistence.EventsRepository, error) {
+func NewMongoEventsRepository(config config.MongoDBConfig) (persistence.EventsRepository, error) {
 	log.Printf("Connecting to database at %s", config.ConnectionURL)
-	session, err := mgo.DialWithTimeout(config.ConnectionURL,1*time.Minute)
+	session, err := mgo.DialWithTimeout(config.ConnectionURL, 1*time.Minute)
 	if err != nil {
 		return nil, err
 	}

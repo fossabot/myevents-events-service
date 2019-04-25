@@ -10,6 +10,7 @@ import (
 	"github.com/danielpacak/myevents-events-service/persistence"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 )
 
@@ -101,7 +102,10 @@ func (h *eventsHandler) create(w http.ResponseWriter, r *http.Request) {
 		Start:      event.StartDate,
 		End:        event.EndDate,
 	}
-	_ = h.emitter.Emit(&msg)
+	err = h.emitter.Emit(&msg)
+	if err != nil {
+		log.Print("Error while emitting event:", err.Error())
+	}
 }
 
 func (h *eventsHandler) writeErrorResponse(w http.ResponseWriter, statusCode int, message string) {
