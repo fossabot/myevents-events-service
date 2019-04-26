@@ -3,7 +3,7 @@ package rest
 import (
 	"encoding/hex"
 	"encoding/json"
-	"github.com/danielpacak/myevents-events-service/domain"
+	"github.com/danielpacak/myevents-events-service/pkg/domain"
 	"net/http"
 	"net/url"
 )

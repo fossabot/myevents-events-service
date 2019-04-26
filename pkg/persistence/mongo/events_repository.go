@@ -1,9 +1,9 @@
 package mongo
 
 import (
-	"github.com/danielpacak/myevents-events-service/config"
-	"github.com/danielpacak/myevents-events-service/domain"
-	"github.com/danielpacak/myevents-events-service/persistence"
+	"github.com/danielpacak/myevents-events-service/pkg/config"
+	"github.com/danielpacak/myevents-events-service/pkg/domain"
+	"github.com/danielpacak/myevents-events-service/pkg/persistence"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"log"

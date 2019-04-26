@@ -1,5 +1,8 @@
 FROM scratch
 
-COPY myevents-events-service /events-service
+LABEL maintainer="pacak.daniel@gmail.com"
+LABEL name="myevents-events-service"
 
-ENTRYPOINT ["/events-service"]
+COPY bin/events-server /events-server
+
+ENTRYPOINT ["/events-server"]

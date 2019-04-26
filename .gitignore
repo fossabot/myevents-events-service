@@ -1,6 +1,7 @@
 .idea/
 coverage.txt
-myevents-events-service
+
+bin/
 
 test/integration/kafka/kafka_test
 test/integration/mongo/mongo_test

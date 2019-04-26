@@ -40,7 +40,7 @@ It's part of the [MyEvents](https://github.com/danielpacak/myevents) application
    ```
    $ curl --header "Content-Type: application/json" \
      --request POST \
-     --data '{"name": "Some event"}' \
+     --data '{"name":"Some event","location":{"Name":"PKiN"}}' \
      http://localhost:8181/events
    ```
 5. Navigate to Mongo Express at [http://localhost:8081](http://localhost:8081) and make sure

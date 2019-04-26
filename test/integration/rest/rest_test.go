@@ -2,9 +2,9 @@ package rest
 
 import (
 	"encoding/hex"
-	"github.com/danielpacak/myevents-events-service/domain"
-	"github.com/danielpacak/myevents-events-service/persistence/mock"
-	"github.com/danielpacak/myevents-events-service/rest"
+	"github.com/danielpacak/myevents-events-service/pkg/domain"
+	"github.com/danielpacak/myevents-events-service/pkg/persistence/mock"
+	"github.com/danielpacak/myevents-events-service/pkg/rest"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"net/http"

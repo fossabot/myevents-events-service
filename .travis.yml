@@ -10,12 +10,11 @@ env:
 install: true
 
 script:
-  - make lint
   - make unit-test
   - make rest-integration-test
   - make mongo-integration-test
   - make kafka-integration-test
-  - go build
+  - make build
   - docker image build -t $DOCKER_USERNAME/myevents-events-service:$TRAVIS_BRANCH .
   - make component-test
 

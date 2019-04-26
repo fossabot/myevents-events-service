@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/danielpacak/myevents-events-service/app"
-	"github.com/danielpacak/myevents-events-service/config"
+	"github.com/danielpacak/myevents-events-service/pkg/app"
+	"github.com/danielpacak/myevents-events-service/pkg/config"
 )
 
 func main() {

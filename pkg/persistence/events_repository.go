@@ -1,6 +1,6 @@
 package persistence
 
-import "github.com/danielpacak/myevents-events-service/domain"
+import "github.com/danielpacak/myevents-events-service/pkg/domain"
 
 // EventsRepository defines method for managing Event entities.
 type EventsRepository interface {

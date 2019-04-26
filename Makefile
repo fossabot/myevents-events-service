@@ -1,7 +1,7 @@
-.PHONY: lint unit-test rest-integration-test mongo-integration-test kafka-integration-test component-test
+.PHONY: build unit-test rest-integration-test mongo-integration-test kafka-integration-test component-test
 
-lint:
-	@go vet $(go list ./... | grep -v vendor)
+build:
+	@go build -o bin/events-server cmd/events-server/main.go
 
 unit-test:
 	@go test -v -short -coverprofile=coverage.txt -covermode=atomic ./...

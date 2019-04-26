@@ -2,9 +2,9 @@ package mongo
 
 import (
 	"encoding/hex"
-	"github.com/danielpacak/myevents-events-service/config"
-	"github.com/danielpacak/myevents-events-service/domain"
-	"github.com/danielpacak/myevents-events-service/persistence/mongo"
+	"github.com/danielpacak/myevents-events-service/pkg/config"
+	"github.com/danielpacak/myevents-events-service/pkg/domain"
+	"github.com/danielpacak/myevents-events-service/pkg/persistence/mongo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/mgo.v2/bson"

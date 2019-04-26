@@ -74,6 +74,7 @@ services:
       EVENTS_SVC_OUTBOUND_TOPIC: 'myevents.events'
       EVENTS_SVC_REST_API_TCP_ADDRESS: ':8181'
       EVENTS_SVC_METRICS_TCP_ADDRESS: ':9100'
+    restart: always
 
 volumes:
   zookeeper-data:

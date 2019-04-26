@@ -1,7 +1,7 @@
 package mock
 
 import (
-	"github.com/danielpacak/myevents-events-service/domain"
+	"github.com/danielpacak/myevents-events-service/pkg/domain"
 	"github.com/stretchr/testify/mock"
 )
 

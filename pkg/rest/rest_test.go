@@ -2,8 +2,8 @@ package rest
 
 import (
 	"errors"
-	"github.com/danielpacak/myevents-events-service/domain"
-	"github.com/danielpacak/myevents-events-service/persistence/mock"
+	"github.com/danielpacak/myevents-events-service/pkg/domain"
+	"github.com/danielpacak/myevents-events-service/pkg/persistence/mock"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"net/http"
