@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func TestEventsRepository(t *testing.T) {
+func TestEventsRepositoryIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Integration test")
 	}

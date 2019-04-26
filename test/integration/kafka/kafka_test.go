@@ -21,7 +21,7 @@ func (e *TestEvent) EventName() string {
 	return "event.test"
 }
 
-func TestEventEmitter(t *testing.T) {
+func TestEventEmitterIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Integration test")
 	}

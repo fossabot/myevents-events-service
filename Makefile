@@ -7,8 +7,8 @@ unit-test:
 	@go test -v -short -coverprofile=coverage.txt -covermode=atomic ./...
 
 rest-integration-test:
-	@go test -v -c -o test/integration/rest/rest_test test/integration/rest/*.go
-	./test/integration/rest/rest_test -test.v
+	@go test -v -c -o test/integration/http/rest/handler_test test/integration/http/rest/*.go
+	./test/integration/http/rest/handler_test -test.v
 
 mongo-integration-test:
 	@go test -v -c -o test/integration/mongo/mongo_test test/integration/mongo/*.go

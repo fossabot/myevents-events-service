@@ -8,7 +8,7 @@ import (
 	"github.com/danielpacak/myevents-events-service/pkg/metrics"
 	"github.com/danielpacak/myevents-events-service/pkg/persistence"
 	"github.com/danielpacak/myevents-events-service/pkg/persistence/mongo"
-	"github.com/danielpacak/myevents-events-service/pkg/rest"
+	"github.com/danielpacak/myevents-events-service/pkg/http/rest"
 	"log"
 	"net/http"
 	"sync"
@@ -49,7 +49,7 @@ func (a *App) Start() {
 	}()
 
 	go func() {
-		server := rest.NewAPIServer(a.repository, a.emitter)
+		server := rest.NewHandler(a.repository, a.emitter)
 		log.Printf("Serving API at `%s`", a.cfg.RestApiAddr)
 		err := http.ListenAndServe(a.cfg.RestApiAddr, server)
 		if err != nil {
