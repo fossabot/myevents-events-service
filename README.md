@@ -38,10 +38,26 @@ It's part of the [MyEvents](https://github.com/danielpacak/myevents) application
    ```
 4. Create a sample event with curl:
    ```
-   $ curl --header "Content-Type: application/json" \
-     --request POST \
-     --data '{"name":"Some event","location":{"Name":"PKiN"}}' \
-     http://localhost:8181/events
+   curl -0 -v http://localhost:8181/events \
+   -H 'Content-Type: text/json; charset=utf-8' \
+   -d @- << EOF
+   {
+       "name": "Dzień Niepodległości Armenii",
+       "duration": 5,
+       "location": {
+           "Name": "PKiN",
+           "Address": "Plac Defilad 1, 00-901 Warszawa",
+           "Country": "Poland",
+           "OpenTime": 30,
+           "EndTime": 40,
+           "Halls": [{
+               "name": "Main hall",
+               "location": "1st floor",
+               "capacity": 150
+           }]
+       }
+   }
+   EOF
    ```
 5. Navigate to Mongo Express at [http://localhost:8081](http://localhost:8081) and make sure
    that the corresponding document was created in events collection.
