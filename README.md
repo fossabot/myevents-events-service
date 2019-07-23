@@ -1,7 +1,8 @@
 # [MyEvents](https://github.com/danielpacak/myevents) :: Events Service
 
 [![Build Status](https://travis-ci.org/danielpacak/myevents-events-service.svg?branch=master)](https://travis-ci.org/danielpacak/myevents-events-service)
-[![codecov](https://codecov.io/gh/danielpacak/myevents-events-service/branch/master/graph/badge.svg)](https://codecov.io/gh/danielpacak/myevents-events-service)
+[![Maintainability](https://api.codeclimate.com/v1/badges/dcb05fb58271dc0f5006/maintainability)](https://codeclimate.com/github/danielpacak/myevents-events-service/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/dcb05fb58271dc0f5006/test_coverage)](https://codeclimate.com/github/danielpacak/myevents-events-service/test_coverage)
 
 The events service handles the events, their locations, and changes that happen to them.
 It's part of the [MyEvents](https://github.com/danielpacak/myevents) application.

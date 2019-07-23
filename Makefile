@@ -4,7 +4,7 @@ build:
 	@go build -o bin/events-server cmd/events-server/main.go
 
 unit-test:
-	@go test -v -short -coverprofile=coverage.txt -covermode=atomic ./...
+	@go test -v -short -coverprofile c.out ./...
 
 rest-integration-test:
 	@go test -v -c -o test/integration/http/rest/handler_test test/integration/http/rest/*.go

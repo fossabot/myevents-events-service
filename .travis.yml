@@ -3,11 +3,16 @@ services:
   - docker
 language: go
 go:
-  - "1.11"
+  - "1.12"
 env:
   - GOOS=linux CGO_ENABLED=0
 
 install: true
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 
 script:
   - make unit-test
@@ -19,6 +24,6 @@ script:
   - make component-test
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
   - docker push $DOCKER_USERNAME/myevents-events-service:$TRAVIS_BRANCH
