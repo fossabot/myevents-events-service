@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/danielpacak/myevents-events-service.svg?branch=master)](https://travis-ci.org/danielpacak/myevents-events-service)
 [![Maintainability](https://api.codeclimate.com/v1/badges/dcb05fb58271dc0f5006/maintainability)](https://codeclimate.com/github/danielpacak/myevents-events-service/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/dcb05fb58271dc0f5006/test_coverage)](https://codeclimate.com/github/danielpacak/myevents-events-service/test_coverage)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdanielpacak%2Fmyevents-events-service.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdanielpacak%2Fmyevents-events-service?ref=badge_shield)
 
 The events service handles the events, their locations, and changes that happen to them.
 It's part of the [MyEvents](https://github.com/danielpacak/myevents) application.
@@ -71,3 +72,7 @@ It's part of the [MyEvents](https://github.com/danielpacak/myevents) application
 2. [Functional options for friendly APIs](https://dave.cheney.net/2014/10/17/functional-options-for-friendly-apis)
 3. [GopherCon 2018: Kat Zien - How Do You Structure Your Go Apps](https://www.youtube.com/watch?v=oL6JBUk6tj0)
 4. [Integration Test With Database in Golang](https://hackernoon.com/integration-test-with-database-in-golang-355dc123fdc9)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdanielpacak%2Fmyevents-events-service.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdanielpacak%2Fmyevents-events-service?ref=badge_large)
